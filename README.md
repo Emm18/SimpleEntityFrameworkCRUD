@@ -3,9 +3,11 @@ Simple Create - Update - Delete Program
       
         User can input Employee name into database using Entity Framework with little validations
           Steps i made
-            1. Created the database
-            2. Added ADO.NET Entity Data Model
-            3. Created an entity class that matches the database to hold the information from the database
-            4. Started Coding
+            1. Created the project
+            2. Using the default form
+            3. Created the database
+            4. Added ADO.NET Entity Data Model
+            5. Created an entity class that matches the database to hold the information from the database
+            6. Started Coding
             
          Note: Dont forget to change the connection string
