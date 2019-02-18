@@ -14,6 +14,9 @@ namespace SimpleEntityFrameworkCRUD
     {
 
         #region variables
+        //this variable is going to help determine if we are adding or editing information
+        //so if it is true it means that we are in adding/editing
+        //and the datagridview actions will not be allowed
         bool _isActive = false;
 
         #endregion
@@ -24,14 +27,17 @@ namespace SimpleEntityFrameworkCRUD
 
         private void frmEmployee_Load(object sender, EventArgs e)
         {
+            //clearing all fields
             resetSettings();
         }
 
         #region Methods
         public void addMode()
         {
+            //addmode activated
             _isActive = true;
 
+            //will get an temporary ID just to show in the label
             lblEmployeeID.Text = getTempID().ToString();
 
             txtName.Enabled = true;
@@ -50,6 +56,7 @@ namespace SimpleEntityFrameworkCRUD
 
         public void editMode()
         {
+            //editmode activated
             _isActive = true;
 
             txtName.Enabled = true;
@@ -67,6 +74,7 @@ namespace SimpleEntityFrameworkCRUD
 
         public void resetSettings()
         {
+            //everytime we reset all the fields, we refresh the datagridview to get all the updated data
             getAllEmployee();
 
             _isActive = false;
@@ -88,6 +96,7 @@ namespace SimpleEntityFrameworkCRUD
 
         public bool hasInvalidInput(string userInput)
         {
+            //this method will determine if the user has input a valid information like entering a null name
             bool checker = false;
             if (userInput == "" || userInput == null)
             {
@@ -102,16 +111,19 @@ namespace SimpleEntityFrameworkCRUD
 
         public void getAllEmployee()
         {
+            //this will get all the employee from the databasea
             List<EmployeeEntity> listEmp = new List<EmployeeEntity>();
             using (EmployeeDbContainer db = new EmployeeDbContainer())
             {
                 listEmp = db.Employees.Select(x => new EmployeeEntity { Id = x.Id, Name = x.Name }).ToList();
             }
+            //populating the datagridview
             dgvEmployee.DataSource = listEmp;           
         }
 
         public void saveEmployee(EmployeeEntity obj)
         {
+            //will save all the employee
             using(EmployeeDbContainer db = new EmployeeDbContainer())
             {
                 Employee emp = new Employee
@@ -126,6 +138,7 @@ namespace SimpleEntityFrameworkCRUD
 
         public void deleteEmployee(int Id)
         {
+            //will delete all employee
             using(EmployeeDbContainer db = new EmployeeDbContainer())
             {
                 var emp = db.Employees.Where(x => x.Id == Id).FirstOrDefault();
@@ -136,6 +149,7 @@ namespace SimpleEntityFrameworkCRUD
 
         public void updateEmployee(int Id , string Name)
         {
+            //will update all the employee
             using (EmployeeDbContainer db = new EmployeeDbContainer())
             {
                 var emp = db.Employees.Where(x => x.Id == Id).FirstOrDefault();
@@ -146,6 +160,7 @@ namespace SimpleEntityFrameworkCRUD
 
         public int getTempID()
         {
+            //getting a temporary ID
             int Id = 0;
             using(EmployeeDbContainer db = new EmployeeDbContainer())
             {
@@ -166,44 +181,45 @@ namespace SimpleEntityFrameworkCRUD
         #region Buttons
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            addMode();
+            addMode(); //add mode settings
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            resetSettings();
+            resetSettings(); //reset all fields
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            //save process
-            if(hasInvalidInput(txtName.Text) == false) { 
+            if(hasInvalidInput(txtName.Text) == false) //check if theres an invalid input
+            { 
             EmployeeEntity emp = new EmployeeEntity(Convert.ToInt32(lblEmployeeID.Text), txtName.Text);
-            saveEmployee(emp);
-            getAllEmployee();
-            resetSettings();
+            saveEmployee(emp); //call the method then pass the emp object
+            getAllEmployee(); //refresh the datagrid
+            resetSettings(); //reset all
             statusBar.Text = "Status : Successfully Saved!";
             }
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            editMode();
+            editMode(); //edit mode settings
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            if (hasInvalidInput(txtName.Text) == false)
+            if (hasInvalidInput(txtName.Text) == false) // check if theres an invalid input
             {
-                updateEmployee(Convert.ToInt32(lblEmployeeID.Text), txtName.Text);
-                resetSettings();
+                updateEmployee(Convert.ToInt32(lblEmployeeID.Text), txtName.Text); //pass the id from the label
+                resetSettings(); //reset all settings
                 statusBar.Text = "Status : Successfully Updated!";
             }
         }
 
         private void dgvEmployee_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (_isActive == false) { 
+            if (_isActive == false) //if this is true it means the user is currently adding or editing 
+            {
             lblEmployeeID.Text = Convert.ToString(dgvEmployee[0, dgvEmployee.CurrentRow.Index].Value);
             txtName.Text = Convert.ToString(dgvEmployee[1, dgvEmployee.CurrentRow.Index].Value);
 
@@ -214,10 +230,10 @@ namespace SimpleEntityFrameworkCRUD
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Are you sure you want to delete this employee?","Warning!",MessageBoxButtons.YesNo);
+            DialogResult result = MessageBox.Show("Are you sure you want to delete this employee?","Warning!",MessageBoxButtons.YesNo); // just to make sure the user want to delete the information
             if(result == DialogResult.Yes) { 
-                deleteEmployee(Convert.ToInt32(lblEmployeeID.Text));
-                resetSettings();
+                deleteEmployee(Convert.ToInt32(lblEmployeeID.Text)); //delete
+                resetSettings(); // reset all
                 statusBar.Text = "Status : Successfully Deleted!";
             }
         }
